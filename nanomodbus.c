@@ -212,7 +212,7 @@ static void msg_state_req(nmbs_t* nmbs, uint8_t fc) {
         nmbs->current_tid++;
 
     // Flush the remaining data on the line before sending the request
-    flush(nmbs);
+    nmbs->platform.flush(nmbs);
 
     msg_state_reset(nmbs);
     nmbs->msg.unit_id = nmbs->dest_address_rtu;
@@ -1891,7 +1891,7 @@ static nmbs_error handle_req_fc(nmbs_t* nmbs) {
             break;
 #endif
         default:
-            flush(nmbs);
+            nmbs->platform.flush(nmbs);
             if (!nmbs->msg.ignored)
                 err = send_exception_msg(nmbs, NMBS_EXCEPTION_ILLEGAL_FUNCTION);
     }
@@ -1951,7 +1951,7 @@ nmbs_error nmbs_server_poll(nmbs_t* nmbs) {
     err = handle_req_fc(nmbs);
     if (err != NMBS_ERROR_NONE) {
         if (err != NMBS_ERROR_TIMEOUT)
-            flush(nmbs);
+            nmbs->platform.flush(nmbs);
 
         return err;
     }
